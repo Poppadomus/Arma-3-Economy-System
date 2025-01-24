@@ -1,3 +1,5 @@
+https://www.youtube.com/watch?v=kULTfimtlQg
+
 Overview:
 Enhance your Arma 3 experience with this economy and commodity trading system. This script adds depth to gameplay by introducing financial management, ATM interactions, vehicle purchasing, shops, and a dynamic commodity market.
 
