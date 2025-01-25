@@ -1,3 +1,5 @@
+Recently updated to include all shops, just add whatever items you want to their specific list in the provided init.sqf
+
 https://www.youtube.com/watch?v=kULTfimtlQg
 
 Overview:
