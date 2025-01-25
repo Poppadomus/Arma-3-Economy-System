@@ -620,6 +620,437 @@ if (hasInterface) then {
             playSound "TaskSucceeded";  
         };  
     }];  
-};   
+};
+
+{ 
+    _x addAction [ 
+        "<t color='#FFD700'>Equipment Shop</t>", 
+        { 
+            private _equipment = [ 
+                ["H_HelmetB", "Combat Helmet", 300], 
+                ["H_HelmetSpecB", "Enhanced Combat Helmet", 500], 
+                ["H_HelmetB_light", "Light Combat Helmet", 250], 
+                ["H_HelmetB_black", "Black Combat Helmet", 350], 
+                ["NVGoggles", "Night Vision Goggles", 1000], 
+                ["NVGoggles_OPFOR", "Advanced NVGs", 1500], 
+                ["NVGoggles_INDEP", "Combat NVGs", 1200], 
+                ["G_Balaclava_blk", "Black Balaclava", 100], 
+                ["G_Balaclava_oli", "Olive Balaclava", 100], 
+                ["G_Balaclava_combat", "Combat Balaclava", 150] 
+            ]; 
+            createDialog "RscDisplayEmpty"; 
+            private _display = findDisplay -1; 
+            private _bg = _display ctrlCreate ["RscText", 1]; 
+            _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.6]; 
+            _bg ctrlSetBackgroundColor [0, 0, 0, 0.7]; 
+            _bg ctrlCommit 0; 
+            private _title = _display ctrlCreate ["RscText", 2]; 
+            _title ctrlSetText "Equipment Shop"; 
+            _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05]; 
+            _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+            _title ctrlSetTextColor [1, 1, 1, 1]; 
+            _title ctrlCommit 0; 
+            private _bankText = _display ctrlCreate ["RscText", 3]; 
+            _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05]; 
+            _bankText ctrlSetTextColor [0, 1, 0, 1]; 
+            _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]]; 
+            _bankText ctrlCommit 0; 
+            private _listBox = _display ctrlCreate ["RscListBox", 4]; 
+            _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.3]; 
+            _listBox ctrlCommit 0; 
+            { 
+                _x params ["_class", "_name", "_price"]; 
+                private _index = _listBox lbAdd format["%1 - $%2", _name, _price]; 
+                _listBox lbSetData [_index, _class]; 
+                _listBox lbSetValue [_index, _price]; 
+                _listBox lbSetPictureRight [_index, getText (configFile >> "CfgWeapons" >> _class >> "picture")]; 
+                _listBox lbSetPictureRightColor [_index, [1, 1, 1, 1]]; 
+            } forEach _equipment; 
+            private _buyBtn = _display ctrlCreate ["RscButton", 5]; 
+            _buyBtn ctrlSetText "Purchase Equipment"; 
+            _buyBtn ctrlSetPosition [0.325, 0.64, 0.35, 0.05]; 
+            _buyBtn ctrlSetTextColor [0, 1, 0, 1]; 
+            _buyBtn ctrlCommit 0; 
+            _buyBtn ctrlAddEventHandler ["ButtonClick", { 
+                params ["_ctrl"]; 
+                private _display = ctrlParent _ctrl; 
+                private _listBox = _display displayCtrl 4; 
+                private _selectedIndex = lbCurSel _listBox; 
+                if (_selectedIndex != -1) then { 
+                    private _itemClass = _listBox lbData _selectedIndex; 
+                    private _price = _listBox lbValue _selectedIndex; 
+                    [player, _itemClass, _price] remoteExec ["fnc_purchaseEquipment", 2]; 
+                }; 
+            }]; 
+            private _closeBtn = _display ctrlCreate ["RscButton", 6]; 
+            _closeBtn ctrlSetText "Close"; 
+            _closeBtn ctrlSetPosition [0.325, 0.71, 0.35, 0.05]; 
+            _closeBtn ctrlSetTextColor [1, 0, 0, 1]; 
+            _closeBtn ctrlCommit 0; 
+            _closeBtn ctrlAddEventHandler ["ButtonClick", { 
+                closeDialog 0; 
+            }]; 
+        }, 
+        [], 
+        1.5, 
+        true, 
+        true, 
+        "", 
+        "", 
+        3 
+    ]; 
+} forEach (allMissionObjects "C_Man_ConstructionWorker_01_Vrana_F"); 
+ 
+if (isServer) then { 
+    fnc_purchaseEquipment = { 
+        params ["_player", "_itemClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+        if (_bankMoney >= _price) then { 
+            if (_itemClass select [0,2] == "H_") then { 
+                _player addHeadgear _itemClass; 
+            } else { 
+                if (_itemClass select [0,2] == "G_") then { 
+                    _player addGoggles _itemClass; 
+                } else { 
+                    _player linkItem _itemClass; 
+                }; 
+            }; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Equipment purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+    publicVariable "fnc_purchaseEquipment"; 
+};
+
+{ 
+    _x addAction [ 
+        "<t color='#FFD700'>Uniform Shop</t>", 
+        { 
+            private _uniforms = [ 
+                ["U_B_CombatUniform_mcam", "Combat Uniform", 400], 
+                ["U_B_CombatUniform_mcam_vest", "Combat Uniform (Vest)", 500], 
+                ["U_B_GhillieSuit", "Ghillie Suit", 1000], 
+                ["U_B_FullGhillie_lsh", "Full Ghillie", 1500], 
+                ["U_B_PilotCoveralls", "Pilot Coveralls", 600], 
+                ["U_B_HeliPilotCoveralls", "Heli Pilot Coveralls", 550], 
+                ["U_B_Wetsuit", "Wetsuit", 800], 
+                ["U_B_CTRG_1", "CTRG Combat Uniform", 700], 
+                ["U_B_CTRG_3", "CTRG Combat Uniform (Rolled-up)", 700], 
+                ["U_B_survival_uniform", "Survival Fatigues", 900] 
+            ]; 
+ 
+            createDialog "RscDisplayEmpty"; 
+            private _display = findDisplay -1; 
+            private _bg = _display ctrlCreate ["RscText", 1]; 
+            _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.6]; 
+            _bg ctrlSetBackgroundColor [0, 0, 0, 0.7]; 
+            _bg ctrlCommit 0; 
+ 
+            private _title = _display ctrlCreate ["RscText", 2]; 
+            _title ctrlSetText "Uniform Shop"; 
+            _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05]; 
+            _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+            _title ctrlSetTextColor [1, 1, 1, 1]; 
+            _title ctrlCommit 0; 
+ 
+            private _bankText = _display ctrlCreate ["RscText", 3]; 
+            _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05]; 
+            _bankText ctrlSetTextColor [0, 1, 0, 1]; 
+            _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]]; 
+            _bankText ctrlCommit 0; 
+ 
+            private _listBox = _display ctrlCreate ["RscListBox", 4]; 
+            _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.3]; 
+            _listBox ctrlCommit 0; 
+ 
+            { 
+                _x params ["_class", "_name", "_price"]; 
+                private _index = _listBox lbAdd format["%1 - $%2", _name, _price]; 
+                _listBox lbSetData [_index, _class]; 
+                _listBox lbSetValue [_index, _price]; 
+                _listBox lbSetPictureRight [_index, getText (configFile >> "CfgWeapons" >> _class >> "picture")]; 
+                _listBox lbSetPictureRightColor [_index, [1, 1, 1, 1]]; 
+            } forEach _uniforms; 
+ 
+            private _buyBtn = _display ctrlCreate ["RscButton", 5]; 
+            _buyBtn ctrlSetText "Purchase Uniform"; 
+            _buyBtn ctrlSetPosition [0.325, 0.64, 0.35, 0.05]; 
+            _buyBtn ctrlSetTextColor [0, 1, 0, 1]; 
+            _buyBtn ctrlCommit 0; 
+ 
+            _buyBtn ctrlAddEventHandler ["ButtonClick", { 
+                params ["_ctrl"]; 
+                private _display = ctrlParent _ctrl; 
+                private _listBox = _display displayCtrl 4; 
+                private _selectedIndex = lbCurSel _listBox; 
+                if (_selectedIndex != -1) then { 
+                    private _uniformClass = _listBox lbData _selectedIndex; 
+                    private _price = _listBox lbValue _selectedIndex; 
+                    [player, _uniformClass, _price] remoteExec ["fnc_purchaseUniform", 2]; 
+                }; 
+            }]; 
+ 
+            private _closeBtn = _display ctrlCreate ["RscButton", 6]; 
+            _closeBtn ctrlSetText "Close"; 
+            _closeBtn ctrlSetPosition [0.325, 0.71, 0.35, 0.05]; 
+            _closeBtn ctrlSetTextColor [1, 0, 0, 1]; 
+            _closeBtn ctrlCommit 0; 
+ 
+            _closeBtn ctrlAddEventHandler ["ButtonClick", { 
+                closeDialog 0; 
+            }]; 
+        }, 
+        [], 
+        1.5, 
+        true, 
+        true, 
+        "", 
+        "", 
+        3 
+    ]; 
+} forEach (allMissionObjects "C_Man_ConstructionWorker_01_Blue_F"); 
+ 
+if (isServer) then { 
+    fnc_purchaseUniform = { 
+        params ["_player", "_uniformClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+         
+        if (_bankMoney >= _price) then { 
+            _player forceAddUniform _uniformClass; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Uniform purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+     
+    publicVariable "fnc_purchaseUniform"; 
+};
+
+{ 
+    _x addAction [ 
+        "<t color='#FFD700'>Backpack Shop</t>", 
+        { 
+            private _backpacks = [ 
+                ["B_AssaultPack_mcamo", "Assault Pack", 300], 
+                ["B_Kitbag_mcamo", "Kitbag", 400], 
+                ["B_TacticalPack_mcamo", "Tactical Pack", 450], 
+                ["B_FieldPack_khk", "Field Pack", 350], 
+                ["B_Bergen_mcamo", "Bergen", 600], 
+                ["B_Carryall_mcamo", "Carryall", 800], 
+                ["B_Parachute", "Parachute", 250], 
+                ["B_ViperHarness_khk_F", "Viper Harness", 700], 
+                ["B_ViperLightHarness_khk_F", "Viper Light Harness", 550], 
+                ["B_RadioBag_01_mtp_F", "Radio Pack", 450] 
+            ]; 
+ 
+            createDialog "RscDisplayEmpty"; 
+            private _display = findDisplay -1; 
+            private _bg = _display ctrlCreate ["RscText", 1]; 
+            _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.6]; 
+            _bg ctrlSetBackgroundColor [0, 0, 0, 0.7]; 
+            _bg ctrlCommit 0; 
+ 
+            private _title = _display ctrlCreate ["RscText", 2]; 
+            _title ctrlSetText "Backpack Shop"; 
+            _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05]; 
+            _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+            _title ctrlSetTextColor [1, 1, 1, 1]; 
+            _title ctrlCommit 0; 
+ 
+            private _bankText = _display ctrlCreate ["RscText", 3]; 
+            _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05]; 
+            _bankText ctrlSetTextColor [0, 1, 0, 1]; 
+            _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]]; 
+            _bankText ctrlCommit 0; 
+ 
+            private _listBox = _display ctrlCreate ["RscListBox", 4]; 
+            _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.3]; 
+            _listBox ctrlCommit 0; 
+ 
+            { 
+                _x params ["_class", "_name", "_price"]; 
+                private _index = _listBox lbAdd format["%1 - $%2", _name, _price]; 
+                _listBox lbSetData [_index, _class]; 
+                _listBox lbSetValue [_index, _price]; 
+                _listBox lbSetPictureRight [_index, getText (configFile >> "CfgVehicles" >> _class >> "picture")]; 
+                _listBox lbSetPictureRightColor [_index, [1, 1, 1, 1]]; 
+            } forEach _backpacks; 
+ 
+            private _buyBtn = _display ctrlCreate ["RscButton", 5]; 
+            _buyBtn ctrlSetText "Purchase Backpack"; 
+            _buyBtn ctrlSetPosition [0.325, 0.64, 0.35, 0.05]; 
+            _buyBtn ctrlSetTextColor [0, 1, 0, 1]; 
+            _buyBtn ctrlCommit 0; 
+ 
+            _buyBtn ctrlAddEventHandler ["ButtonClick", { 
+                params ["_ctrl"]; 
+                private _display = ctrlParent _ctrl; 
+                private _listBox = _display displayCtrl 4; 
+                private _selectedIndex = lbCurSel _listBox; 
+                if (_selectedIndex != -1) then { 
+                    private _backpackClass = _listBox lbData _selectedIndex; 
+                    private _price = _listBox lbValue _selectedIndex; 
+                    [player, _backpackClass, _price] remoteExec ["fnc_purchaseBackpack", 2]; 
+                }; 
+            }]; 
+ 
+            private _closeBtn = _display ctrlCreate ["RscButton", 6]; 
+            _closeBtn ctrlSetText "Close"; 
+            _closeBtn ctrlSetPosition [0.325, 0.71, 0.35, 0.05]; 
+            _closeBtn ctrlSetTextColor [1, 0, 0, 1]; 
+            _closeBtn ctrlCommit 0; 
+ 
+            _closeBtn ctrlAddEventHandler ["ButtonClick", { 
+                closeDialog 0; 
+            }]; 
+        }, 
+        [], 
+        1.5, 
+        true, 
+        true, 
+        "", 
+        "", 
+        3 
+    ]; 
+} forEach (allMissionObjects "C_Man_ConstructionWorker_01_Red_F"); 
+ 
+if (isServer) then { 
+    fnc_purchaseBackpack = { 
+        params ["_player", "_backpackClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+         
+        if (_bankMoney >= _price) then { 
+            removeBackpack _player; 
+            _player addBackpack _backpackClass; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Backpack purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+     
+    publicVariable "fnc_purchaseBackpack"; 
+};
+
+{      
+    _x addAction [ 
+        "<t color='#FFD700'>Equipment Shop</t>", 
+        {      
+            private _equipment = [ 
+                ["ItemMap", "Map", 50], 
+                ["ItemCompass", "Compass", 75], 
+                ["ItemWatch", "Watch", 100], 
+                ["ItemGPS", "GPS", 300], 
+                ["Binocular", "Binoculars", 250], 
+                ["FirstAidKit", "First Aid Kit", 150], 
+                ["Medikit", "Medikit", 500], 
+                ["ToolKit", "Toolkit", 350] 
+            ]; 
+ 
+            createDialog "RscDisplayEmpty"; 
+            private _display = findDisplay -1; 
+ 
+            private _bg = _display ctrlCreate ["RscText", 1]; 
+            _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.6]; 
+            _bg ctrlSetBackgroundColor [0, 0, 0, 0.7]; 
+            _bg ctrlCommit 0; 
+ 
+            private _title = _display ctrlCreate ["RscText", 2]; 
+            _title ctrlSetText "Equipment Shop"; 
+            _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05]; 
+            _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+            _title ctrlSetTextColor [1, 1, 1, 1]; 
+            _title ctrlCommit 0; 
+ 
+            private _bankText = _display ctrlCreate ["RscText", 3]; 
+            _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05]; 
+            _bankText ctrlSetTextColor [0, 1, 0, 1]; 
+            _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]]; 
+            _bankText ctrlCommit 0; 
+ 
+            private _listBox = _display ctrlCreate ["RscListBox", 4]; 
+            _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.3]; 
+            _listBox ctrlCommit 0; 
+ 
+            { 
+                _x params ["_class", "_name", "_price"]; 
+                private _index = _listBox lbAdd format["%1 - $%2", _name, _price]; 
+                _listBox lbSetData [_index, _class]; 
+                _listBox lbSetValue [_index, _price]; 
+                _listBox lbSetPictureRight [_index, getText (configFile >> "CfgWeapons" >> _class >> "picture")]; 
+                _listBox lbSetPictureRightColor [_index, [1, 1, 1, 1]]; 
+            } forEach _equipment; 
+ 
+            private _buyBtn = _display ctrlCreate ["RscButton", 5]; 
+            _buyBtn ctrlSetText "Purchase Equipment"; 
+            _buyBtn ctrlSetPosition [0.325, 0.64, 0.35, 0.05]; 
+            _buyBtn ctrlSetTextColor [0, 1, 0, 1]; 
+            _buyBtn ctrlCommit 0; 
+ 
+            _buyBtn ctrlAddEventHandler ["ButtonClick", { 
+                params ["_ctrl"]; 
+                private _display = ctrlParent _ctrl; 
+                private _listBox = _display displayCtrl 4; 
+                private _selectedIndex = lbCurSel _listBox; 
+ 
+                if (_selectedIndex != -1) then { 
+                    private _itemClass = _listBox lbData _selectedIndex; 
+                    private _price = _listBox lbValue _selectedIndex; 
+                    [player, _itemClass, _price] remoteExec ["fnc_purchaseEquipment", 2]; 
+                }; 
+            }]; 
+ 
+            private _closeBtn = _display ctrlCreate ["RscButton", 6]; 
+            _closeBtn ctrlSetText "Close"; 
+            _closeBtn ctrlSetPosition [0.325, 0.71, 0.35, 0.05]; 
+            _closeBtn ctrlSetTextColor [1, 0, 0, 1]; 
+            _closeBtn ctrlCommit 0; 
+ 
+            _closeBtn ctrlAddEventHandler ["ButtonClick", { 
+                closeDialog 0; 
+            }]; 
+        }, 
+        [], 
+        1.5, 
+        true, 
+        true, 
+        "", 
+        "", 
+        3 
+    ]; 
+} forEach (allMissionObjects "C_man_w_worker_F"); 
+ 
+if (isServer) then { 
+    fnc_purchaseEquipment = { 
+        params ["_player", "_itemClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+ 
+        if (_bankMoney >= _price) then { 
+            _player addItem _itemClass; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Equipment purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+ 
+    publicVariable "fnc_purchaseEquipment"; 
+};
+   
 setTimeMultiplier 0;    
 setAccTime 0.80;
