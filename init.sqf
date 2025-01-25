@@ -1,3 +1,22 @@
+TER_fnc_handlePayment = {     
+    params ["_price"];     
+    private _playerUID = getPlayerUID player;     
+    private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0];     
+         
+    if (_bankMoney >= _price) then {     
+        _bankMoney = _bankMoney - _price;     
+        profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney];     
+        saveProfileNamespace;     
+        true     
+    } else {     
+        false     
+    };     
+};    
+    
+    
+missionNamespace setVariable ["TER_VASS_paymentHandler", TER_fnc_handlePayment];    
+    
+    
 if (isServer) then {     
     {     
         if (isNil {profileNamespace getVariable (getPlayerUID _x + "_bankMoney")}) then {     
@@ -840,16 +859,112 @@ if (isServer) then {
         "<t color='#FFD700'>Backpack Shop</t>", 
         { 
             private _backpacks = [ 
-                ["B_AssaultPack_mcamo", "Assault Pack", 300], 
-                ["B_Kitbag_mcamo", "Kitbag", 400], 
-                ["B_TacticalPack_mcamo", "Tactical Pack", 450], 
-                ["B_FieldPack_khk", "Field Pack", 350], 
-                ["B_Bergen_mcamo", "Bergen", 600], 
-                ["B_Carryall_mcamo", "Carryall", 800], 
-                ["B_Parachute", "Parachute", 250], 
-                ["B_ViperHarness_khk_F", "Viper Harness", 700], 
-                ["B_ViperLightHarness_khk_F", "Viper Light Harness", 550], 
-                ["B_RadioBag_01_mtp_F", "Radio Pack", 450] 
+				["B_AssaultPack_blk", "Black Assault Pack", 150],
+				["B_AssaultPack_cbr", "Coyote Assault Pack", 150],
+				["B_AssaultPack_dgtl", "Digital Assault Pack", 150],
+				["B_AssaultPack_eaf_F", "EAF Assault Pack", 150],
+				["B_AssaultPack_rgr", "Ranger Green Assault Pack", 150],
+				["B_AssaultPack_ocamo", "Hex Assault Pack", 150],
+				["B_AssaultPack_khk", "Khaki Assault Pack", 150],
+				["B_AssaultPack_mcamo", "MTP Assault Pack", 150],
+				["B_AssaultPack_sgg", "Sage Assault Pack", 150],
+				["B_AssaultPack_tna_F", "Tropic Assault Pack", 150],
+				["B_AssaultPack_wdl_F", "Woodland Assault Pack", 150],
+				["B_Bergen_dgtl_F", "Digital Bergen", 300],
+				["B_Bergen_hex_F", "Hex Bergen", 300],
+				["B_Bergen_mcamo_F", "MTP Bergen", 300],
+				["B_Bergen_tna_F", "Tropic Bergen", 300],
+				["B_Respawn_Sleeping_bag_blue_F", "Blue Sleeping Bag", 100],
+				["B_Respawn_Sleeping_bag_brown_F", "Brown Sleeping Bag", 100],
+				["B_Respawn_TentDome_F", "Dome Tent", 200],
+				["B_Patrol_Respawn_bag_F", "Patrol Bag", 150],
+				["B_Respawn_Sleeping_bag_F", "Sleeping Bag", 100],
+				["B_Respawn_TentA_F", "Tent", 200],
+				["B_Carryall_blk", "Black Carryall", 400],
+				["B_Carryall_cbr", "Coyote Carryall", 400],
+				["B_Carryall_eaf_F", "EAF Carryall", 400],
+				["B_Carryall_ghex_F", "Green Hex Carryall", 400],
+				["B_Carryall_green_F", "Green Carryall", 400],
+				["B_Carryall_ocamo", "Hex Carryall", 400],
+				["B_Carryall_khk", "Khaki Carryall", 400],
+				["B_Carryall_mcamo", "MTP Carryall", 400],
+				["B_Carryall_oli", "Olive Carryall", 400],
+				["B_Carryall_taiga_F", "Taiga Carryall", 400],
+				["B_Carryall_oucamo", "Urban Carryall", 400],
+				["B_Carryall_wdl_F", "Woodland Carryall", 400],
+				["B_CombinationUnitRespirator_01_F", "Respirator", 250],
+				["B_CivilianBackpack_01_Everyday_Astra_F", "Everyday Astra Pack", 200],
+				["B_CivilianBackpack_01_Everyday_Black_F", "Everyday Black Pack", 200],
+				["B_CivilianBackpack_01_Everyday_Vrana_F", "Everyday Vrana Pack", 200],
+				["B_CivilianBackpack_01_Everyday_IDAP_F", "IDAP Pack", 200],
+				["B_FieldPack_blk", "Black Field Pack", 250],
+				["B_FieldPack_cbr", "Coyote Field Pack", 250],
+				["B_FieldPack_ghex_F", "Green Hex Field Pack", 250],
+				["B_FieldPack_green_F", "Green Field Pack", 250],
+				["B_FieldPack_ocamo", "Hex Field Pack", 250],
+				["B_FieldPack_khk", "Khaki Field Pack", 250],
+				["B_FieldPack_oli", "Olive Field Pack", 250],
+				["B_FieldPack_taiga_F", "Taiga Field Pack", 250],
+				["B_FieldPack_oucamo", "Urban Field Pack", 250],
+				["B_Kitbag_cbr", "Coyote Kitbag", 300],
+				["B_Kitbag_rgr", "Green Kitbag", 300],
+				["B_Kitbag_mcamo", "MTP Kitbag", 300],
+				["B_Kitbag_sgg", "Sage Kitbag", 300],
+				["B_Kitbag_tan", "Tan Kitbag", 300],
+				["B_LegStrapBag_black_F", "Black Leg Strap", 150],
+				["B_LegStrapBag_coyote_F", "Coyote Leg Strap", 150],
+				["B_LegStrapBag_olive_F", "Olive Leg Strap", 150],
+				["B_Messenger_Black_F", "Black Messenger", 200],
+				["B_Messenger_Coyote_F", "Coyote Messenger", 200],
+				["B_Messenger_Gray_F", "Gray Messenger", 200],
+				["B_Messenger_Olive_F", "Olive Messenger", 200],
+				["B_Messenger_IDAP_F", "IDAP Messenger", 200],
+				["B_RadioBag_01_black_F", "Black Radio Pack", 350],
+				["B_RadioBag_01_digi_F", "Digital Radio Pack", 350],
+				["B_RadioBag_01_eaf_F", "EAF Radio Pack", 350],
+				["B_RadioBag_01_ghex_F", "Green Hex Radio Pack", 350],
+				["B_RadioBag_01_hex_F", "Hex Radio Pack", 350],
+				["B_RadioBag_01_mtp_F", "MTP Radio Pack", 350],
+				["B_RadioBag_01_tropic_F", "Tropic Radio Pack", 350],
+				["B_RadioBag_01_oucamo_F", "Urban Radio Pack", 350],
+				["B_RadioBag_01_wdl_F", "Woodland Radio Pack", 350],
+				["B_SCBA_01_F", "SCBA", 300],
+				["B_CivilianBackpack_01_Sport_Blue_F", "Blue Sport Pack", 200],
+				["B_CivilianBackpack_01_Sport_Green_F", "Green Sport Pack", 200],
+				["B_CivilianBackpack_01_Sport_Red_F", "Red Sport Pack", 200],
+				["B_Parachute", "Parachute", 400],
+				["B_TacticalPack_blk", "Black Tactical Pack", 300],
+				["B_TacticalPack_rgr", "Green Tactical Pack", 300],
+				["B_TacticalPack_ocamo", "Hex Tactical Pack", 300],
+				["B_TacticalPack_mcamo", "MTP Tactical Pack", 300],
+				["B_TacticalPack_oli", "Olive Tactical Pack", 300],
+				["I_UAV_06_backpack_F", "AR-2 Darter Bag [AAF]", 1500],
+				["O_UAV_06_backpack_F", "AR-2 Darter Bag [CSAT]", 1500],
+				["B_UAV_06_backpack_F", "AR-2 Darter Bag [NATO]", 1500],
+				["I_UAV_06_medical_backpack_F", "AR-2 Medical Darter [AAF]", 2000],
+				["O_UAV_06_medical_backpack_F", "AR-2 Medical Darter [CSAT]", 2000],
+				["B_UAV_06_medical_backpack_F", "AR-2 Medical Darter [NATO]", 2000],
+				["I_UAV_01_backpack_F", "AR-2 Darter Bag [AAF]", 1500],
+				["O_UAV_01_backpack_F", "AR-2 Darter Bag [CSAT]", 1500],
+				["B_UAV_01_backpack_F", "AR-2 Darter Bag [NATO]", 1500],
+				["C_IDAP_UAV_06_antimine_backpack_F", "Demining Drone", 2500],
+				["I_UGV_02_Demining_backpack_F", "ED-1D Demining [AAF]", 3000],
+				["O_UGV_02_Demining_backpack_F", "ED-1D Demining [CSAT]", 3000],
+				["B_UGV_02_Demining_backpack_F", "ED-1D Demining [NATO]", 3000],
+				["I_UGV_02_Science_backpack_F", "ED-1E Science [AAF]", 2500],
+				["O_UGV_02_Science_backpack_F", "ED-1E Science [CSAT]", 2500],
+				["B_UGV_02_Science_backpack_F", "ED-1E Science [NATO]", 2500],
+				["B_AssaultPack_Kerry", "Kerry's Pack", 150],
+				["B_ViperHarness_blk_F", "Black Viper Harness", 500],
+				["B_ViperHarness_ghex_F", "Green Hex Viper Harness", 500],
+				["B_ViperHarness_hex_F", "Hex Viper Harness", 500],
+				["B_ViperHarness_khk_F", "Khaki Viper Harness", 500],
+				["B_ViperHarness_oli_F", "Olive Viper Harness", 500],
+				["B_ViperLightHarness_blk_F", "Black Light Viper Harness", 400],
+				["B_ViperLightHarness_ghex_F", "Green Hex Light Viper Harness", 400],
+				["B_ViperLightHarness_hex_F", "Hex Light Viper Harness", 400],
+				["B_ViperLightHarness_khk_F", "Khaki Light Viper Harness", 400],
+				["B_ViperLightHarness_oli_F", "Olive Light Viper Harness", 400] 
             ]; 
  
             createDialog "RscDisplayEmpty"; 
