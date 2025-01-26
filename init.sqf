@@ -186,7 +186,52 @@ if (isServer) then {
             ["C_Offroad_01_F", "Offroad", 125000],      
             ["C_Hatchback_01_F", "Hatchback", 100],      
             ["C_Hatchback_01_sport_F", "Sport Hatchback", 150000],      
-            ["C_Van_01_fuel_F", "Fuel Van", 325000]      
+            ["C_Van_01_fuel_F", "Fuel Van", 325000], 
+   ["B_Truck_01_mover_F", "HEMTT Mover", 750000], 
+   ["B_Truck_01_ammo_F", "HEMTT Ammo", 850000], 
+   ["B_Truck_01_cargo_F", "HEMTT Cargo", 800000], 
+   ["B_Truck_01_flatbed_F", "HEMTT Flatbed", 775000], 
+   ["B_Truck_01_fuel_F", "HEMTT Fuel", 825000], 
+   ["B_Truck_01_medical_F", "HEMTT Medical", 800000], 
+   ["B_Truck_01_Repair_F", "HEMTT Repair", 850000], 
+   ["B_Truck_01_transport_F", "HEMTT Transport", 750000], 
+   ["B_Truck_01_covered_F", "HEMTT Covered", 775000], 
+   ["B_MRAP_01_F", "Hunter", 600000], 
+   ["B_MRAP_01_gmg_F", "Hunter GMG", 950000], 
+   ["B_LSV_01_AT_F", "Prowler AT", 900000], 
+   ["B_LSV_01_armed_F", "Prowler Armed", 850000], 
+   ["B_LSV_01_unarmed_F", "Prowler", 500000], 
+   ["B_Quadbike_01_F", "Military Quad", 75000], 
+   ["O_MRAP_02_F", "Ifrit", 600000], 
+   ["O_MRAP_02_gmg_F", "Ifrit GMG", 950000], 
+   ["O_MRAP_02_hmg_F", "Ifrit HMG", 925000], 
+   ["O_LSV_02_AT_F", "Qilin AT", 900000], 
+   ["O_LSV_02_armed_F", "Qilin Armed", 850000], 
+   ["O_LSV_02_unarmed_F", "Qilin", 500000], 
+   ["O_Quadbike_01_F", "CSAT Quad", 75000], 
+   ["O_Truck_03_device_F", "Tempest Device", 900000], 
+   ["O_Truck_03_ammo_F", "Tempest Ammo", 850000], 
+   ["O_Truck_03_fuel_F", "Tempest Fuel", 825000], 
+   ["O_Truck_03_medical_F", "Tempest Medical", 800000], 
+   ["O_Truck_03_repair_F", "Tempest Repair", 850000], 
+   ["O_Truck_03_transport_F", "Tempest Transport", 750000], 
+   ["O_Truck_03_covered_F", "Tempest Covered", 775000], 
+   ["O_Truck_02_Ammo_F", "Zamak Ammo", 800000], 
+   ["O_Truck_02_fuel_F", "Zamak Fuel", 775000], 
+   ["O_Truck_02_medical_F", "Zamak Medical", 750000], 
+   ["O_Truck_02_box_F", "Zamak Box", 725000], 
+   ["O_Truck_02_transport_F", "Zamak Transport", 700000], 
+   ["O_Truck_02_covered_F", "Zamak Covered", 725000], 
+   ["I_Quadbike_01_F", "AAF Quad", 75000], 
+   ["I_MRAP_03_F", "Strider", 600000], 
+   ["I_MRAP_03_gmg_F", "Strider GMG", 950000], 
+   ["I_MRAP_03_hmg_F", "Strider HMG", 925000], 
+   ["I_Truck_02_ammo_F", "AAF Zamak Ammo", 800000], 
+   ["I_Truck_02_fuel_F", "AAF Zamak Fuel", 775000], 
+   ["I_Truck_02_medical_F", "AAF Zamak Medical", 750000], 
+   ["I_Truck_02_box_F", "AAF Zamak Box", 725000], 
+   ["I_Truck_02_transport_F", "AAF Zamak Transport", 700000], 
+   ["I_Truck_02_covered_F", "AAF Zamak Covered", 725000]    
         ];      
               
         createDialog "RscDisplayEmpty";      
@@ -2271,4 +2316,660 @@ if (isServer) then {
     };  
  
     publicVariable "fnc_purchaseEquipment";  
+}; 
+ 
+{ 
+    _x addAction ["<t color='#FFD700'>LMG Shop</t>", { 
+  private _weapons = [ 
+   ["LMG_03_F", "LMG-3 6.5mm", 15000, ["200Rnd_556x45_Box_F"]], 
+   ["LMG_Mk200_F", "Mk200 6.5mm", 18000, ["200Rnd_65x39_cased_Box"]], 
+   ["LMG_Mk200_black_F", "Mk200 Black 6.5mm", 18500, ["200Rnd_65x39_cased_Box"]], 
+   ["arifle_MX_SW_F", "MX SW 6.5mm", 12000, ["100Rnd_65x39_caseless_mag"]], 
+   ["arifle_MX_SW_Black_F", "MX SW Black 6.5mm", 12500, ["100Rnd_65x39_caseless_mag"]], 
+   ["arifle_MX_SW_khk_F", "MX SW Khaki 6.5mm", 12500, ["100Rnd_65x39_caseless_mag"]], 
+   ["MMG_01_hex_F", "Navid Hex 9.3mm", 25000, ["150Rnd_93x64_Mag"]], 
+   ["MMG_01_tan_F", "Navid Tan 9.3mm", 25000, ["150Rnd_93x64_Mag"]], 
+   ["MMG_02_black_F", "SPMG Black .338", 22000, ["130Rnd_338_Mag"]], 
+   ["MMG_02_camo_F", "SPMG Camo .338", 22000, ["130Rnd_338_Mag"]], 
+   ["MMG_02_sand_F", "SPMG Sand .338", 22000, ["130Rnd_338_Mag"]], 
+   ["LMG_Zafir_F", "Zafir 7.62mm", 20000, ["150Rnd_762x54_Box"]] 
+  ]; 
+ 
+  private _mags = [ 
+   ["200Rnd_556x45_Box_F", "5.56mm Box", 800], 
+   ["200Rnd_65x39_cased_Box", "6.5mm Box", 1000], 
+   ["100Rnd_65x39_caseless_mag", "6.5mm Caseless", 600], 
+   ["150Rnd_93x64_Mag", "9.3mm Box", 1500], 
+   ["130Rnd_338_Mag", ".338 Box", 1200], 
+   ["150Rnd_762x54_Box", "7.62mm Box", 1000] 
+  ]; 
+ 
+        createDialog "RscDisplayEmpty"; 
+        private _display = findDisplay -1; 
+ 
+        private _bg = _display ctrlCreate ["RscText", 1]; 
+        _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.7]; 
+        _bg ctrlSetBackgroundColor [0, 0, 0, 0.7]; 
+        _bg ctrlCommit 0; 
+ 
+        private _title = _display ctrlCreate ["RscText", 2]; 
+        _title ctrlSetText "Weapon Shop"; 
+        _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05]; 
+        _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+        _title ctrlSetTextColor [1, 1, 1, 1]; 
+        _title ctrlCommit 0; 
+ 
+        private _bankText = _display ctrlCreate ["RscText", 3]; 
+        _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05]; 
+        _bankText ctrlSetTextColor [0, 1, 0, 1]; 
+        _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]]; 
+        _bankText ctrlCommit 0; 
+ 
+        private _listBox = _display ctrlCreate ["RscListBox", 4]; 
+        _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.2]; 
+        _listBox ctrlCommit 0; 
+ 
+        { 
+            _x params ["_class", "_name", "_price"]; 
+            private _index = _listBox lbAdd format["%1 - $%2", _name, _price]; 
+            _listBox lbSetData [_index, _class]; 
+            _listBox lbSetValue [_index, _price]; 
+            _listBox lbSetPictureRight [_index, getText (configFile >> "CfgWeapons" >> _class >> "picture")]; 
+            _listBox lbSetPictureRightColor [_index, [1, 1, 1, 1]]; 
+        } forEach _weapons; 
+ 
+        private _buyBtn = _display ctrlCreate ["RscButton", 5]; 
+        _buyBtn ctrlSetText "Purchase Weapon"; 
+        _buyBtn ctrlSetPosition [0.325, 0.53, 0.16, 0.05]; 
+        _buyBtn ctrlSetTextColor [0, 1, 0, 1]; 
+        _buyBtn ctrlCommit 0; 
+ 
+        _buyBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _display = ctrlParent _ctrl; 
+            private _listBox = _display displayCtrl 4; 
+            private _selectedIndex = lbCurSel _listBox; 
+            if (_selectedIndex != -1) then { 
+                private _weaponClass = _listBox lbData _selectedIndex; 
+                private _price = _listBox lbValue _selectedIndex; 
+                [player, _weaponClass, _price] remoteExec ["fnc_purchaseWeapon", 2]; 
+            }; 
+        }]; 
+ 
+        private _sellBtn = _display ctrlCreate ["RscButton", 10]; 
+        _sellBtn ctrlSetText "Sell Weapon"; 
+        _sellBtn ctrlSetPosition [0.495, 0.53, 0.16, 0.05]; 
+        _sellBtn ctrlSetTextColor [1, 0.5, 0, 1]; 
+        _sellBtn ctrlCommit 0; 
+ 
+        _sellBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _player = player; 
+            private _currentWeapon = currentWeapon _player; 
+            if (_currentWeapon != "") then { 
+                private _weaponInfo = _weapons findIf { (_x select 0) isEqualTo _currentWeapon }; 
+                if (_weaponInfo != -1) then { 
+                    private _salePrice = (_weapons select _weaponInfo) select 2; 
+                    _salePrice = _salePrice / 2; 
+                    private _playerUID = getPlayerUID _player; 
+                    private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+                    _player removeWeapon _currentWeapon; 
+                    { 
+                        if (_x in (magazines _player)) then { 
+                            _player removeMagazine _x; 
+                        }; 
+                    } forEach (getArray (configFile >> "CfgWeapons" >> _currentWeapon >> "magazines")); 
+                    _bankMoney = _bankMoney + _salePrice; 
+                    profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+                    saveProfileNamespace; 
+                    [format ["<t size='0.7' color='#00ff00'>Weapon sold for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _salePrice, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+                } else { 
+                    ["<t size='0.7' color='#ff0000'>This weapon is not for sale here!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+                }; 
+            } else { 
+                ["<t size='0.7' color='#ff0000'>You have no weapon to sell!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+            }; 
+        }]; 
+ 
+        private _magSection = _display ctrlCreate ["RscText", 7]; 
+        _magSection ctrlSetText "Magazines"; 
+        _magSection ctrlSetPosition [0.3, 0.59, 0.4, 0.05]; 
+        _magSection ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+        _magSection ctrlSetTextColor [1, 1, 1, 1]; 
+        _magSection ctrlCommit 0; 
+ 
+        private _magListBox = _display ctrlCreate ["RscListBox", 8]; 
+        _magListBox ctrlSetPosition [0.325, 0.65, 0.35, 0.2]; 
+        _magListBox ctrlCommit 0; 
+ 
+        { 
+            _x params ["_magClass", "_magName", "_magPrice"]; 
+            private _magIndex = _magListBox lbAdd format["%1 - $%2", _magName, _magPrice]; 
+            _magListBox lbSetData [_magIndex, _magClass]; 
+            _magListBox lbSetValue [_magIndex, _magPrice]; 
+            _magListBox lbSetPictureRight [_magIndex, getText (configFile >> "CfgMagazines" >> _magClass >> "picture")]; 
+            _magListBox lbSetPictureRightColor [_magIndex, [1, 1, 1, 1]]; 
+        } forEach _mags; 
+ 
+        private _buyMagBtn = _display ctrlCreate ["RscButton", 9]; 
+        _buyMagBtn ctrlSetText "Buy Mag"; 
+        _buyMagBtn ctrlSetPosition [0.325, 0.86, 0.16, 0.05]; 
+        _buyMagBtn ctrlSetTextColor [0, 1, 0, 1]; 
+        _buyMagBtn ctrlCommit 0; 
+ 
+        _buyMagBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _display = ctrlParent _ctrl; 
+            private _magListBox = _display displayCtrl 8; 
+            private _selectedMagIndex = lbCurSel _magListBox; 
+            if (_selectedMagIndex != -1) then { 
+                private _magClass = _magListBox lbData _selectedMagIndex; 
+                private _magPrice = _magListBox lbValue _selectedMagIndex; 
+                [player, _magClass, _magPrice] remoteExec ["fnc_purchaseMag", 2]; 
+            }; 
+        }]; 
+ 
+        private _closeBtn = _display ctrlCreate ["RscButton", 6]; 
+        _closeBtn ctrlSetText "Close"; 
+        _closeBtn ctrlSetPosition [0.515, 0.86, 0.16, 0.05]; 
+        _closeBtn ctrlSetTextColor [1, 0, 0, 1]; 
+        _closeBtn ctrlCommit 0; 
+ 
+        _closeBtn ctrlAddEventHandler ["ButtonClick", { 
+            closeDialog 0; 
+        }]; 
+    }, [], 1.5, true, true, "", "", 3]; 
+} forEach (allMissionObjects "C_IDAP_Man_AidWorker_02_F"); 
+ 
+if (isServer) then { 
+    fnc_purchaseWeapon = { 
+        params ["_player", "_weaponClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+        if (_bankMoney >= _price) then { 
+            private _currentWeapon = currentWeapon _player; 
+            if (_currentWeapon != "") then { 
+                _player removeWeapon _currentWeapon; 
+                { 
+                    if (_x in (magazines _player)) then { 
+                        _player removeMagazine _x; 
+                    }; 
+                } forEach (getArray (configFile >> "CfgWeapons" >> _currentWeapon >> "magazines")); 
+            }; 
+            _player addWeapon _weaponClass; 
+            private _magazineClass = getArray (configFile >> "CfgWeapons" >> _weaponClass >> "magazines") select 0; 
+            for "_i" from 1 to 3 do { 
+                _player addMagazine _magazineClass; 
+            }; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Weapon purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+ 
+    fnc_purchaseMag = { 
+        params ["_player", "_magClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+        if (_bankMoney >= _price) then { 
+            _player addMagazine _magClass; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Magazine purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+ 
+    publicVariable "fnc_purchaseWeapon"; 
+    publicVariable "fnc_purchaseMag"; 
+}; 
+ 
+{ 
+    _x addAction ["<t color='#FFD700'>Sniper Shop</t>", { 
+  private _weapons = [ 
+   ["srifle_DMR_04_F", "ASP-1 Kir 12.7mm", 22000, ["10Rnd_127x54_Mag"]], 
+   ["srifle_DMR_04_Tan_F", "ASP-1 Kir Tan 12.7mm", 22500, ["10Rnd_127x54_Mag"]], 
+   ["srifle_DMR_07_blk_F", "CMR-76 Black 6.5mm", 18000, ["20Rnd_650x39_Cased_Mag_F"]], 
+   ["srifle_DMR_07_ghex_F", "CMR-76 GHEX 6.5mm", 18000, ["20Rnd_650x39_Cased_Mag_F"]], 
+   ["srifle_DMR_07_hex_F", "CMR-76 Hex 6.5mm", 18000, ["20Rnd_650x39_Cased_Mag_F"]], 
+   ["srifle_DMR_05_blk_F", "Cyrus Black 9.3mm", 24000, ["10Rnd_93x64_DMR_05_Mag"]], 
+   ["srifle_DMR_05_hex_F", "Cyrus Hex 9.3mm", 24000, ["10Rnd_93x64_DMR_05_Mag"]], 
+   ["srifle_DMR_05_tan_f", "Cyrus Tan 9.3mm", 24000, ["10Rnd_93x64_DMR_05_Mag"]], 
+   ["srifle_GM6_F", "GM6 Lynx 12.7mm", 32000, ["5Rnd_127x108_Mag"]], 
+   ["srifle_GM6_camo_F", "GM6 Lynx Camo 12.7mm", 32500, ["5Rnd_127x108_Mag"]], 
+   ["srifle_GM6_ghex_F", "GM6 Lynx GHEX 12.7mm", 32500, ["5Rnd_127x108_Mag"]], 
+   ["srifle_LRR_F", "M320 LRR .408", 30000, ["7Rnd_408_Mag"]], 
+   ["srifle_LRR_camo_F", "M320 LRR Camo .408", 30500, ["7Rnd_408_Mag"]], 
+   ["srifle_LRR_tna_F", "M320 LRR Tropic .408", 30500, ["7Rnd_408_Mag"]], 
+   ["srifle_DMR_02_F", "MAR-10 .338", 28000, ["10Rnd_338_Mag"]], 
+   ["srifle_DMR_02_camo_F", "MAR-10 Camo .338", 28500, ["10Rnd_338_Mag"]], 
+   ["srifle_DMR_02_sniper_F", "MAR-10 Sand .338", 28500, ["10Rnd_338_Mag"]], 
+   ["srifle_DMR_03_F", "Mk-I EMR 7.62mm", 20000, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_03_multicam_F", "Mk-I EMR Camo 7.62mm", 20500, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_03_khaki_F", "Mk-I EMR Khaki 7.62mm", 20500, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_03_tan_F", "Mk-I EMR Tan 7.62mm", 20500, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_03_woodland_F", "Mk-I EMR Woodland 7.62mm", 20500, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_06_camo_F", "Mk14 Camo 7.62mm", 19000, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_06_hunter_F", "Mk14 Hunter 7.62mm", 19000, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_06_olive_F", "Mk14 Olive 7.62mm", 19000, ["20Rnd_762x51_Mag"]], 
+   ["srifle_EBR_F", "Mk18 ABR 7.62mm", 21000, ["20Rnd_762x51_Mag"]], 
+   ["srifle_DMR_01_F", "Rahim 7.62mm", 18500, ["10Rnd_762x54_Mag"]] 
+  ]; 
+ 
+  private _mags = [ 
+   ["10Rnd_127x54_Mag", "12.7mm Mag", 400], 
+   ["20Rnd_650x39_Cased_Mag_F", "6.5mm Mag", 300], 
+   ["10Rnd_93x64_DMR_05_Mag", "9.3mm Mag", 450], 
+   ["5Rnd_127x108_Mag", "12.7mm Mag", 600], 
+   ["7Rnd_408_Mag", ".408 Mag", 550], 
+   ["10Rnd_338_Mag", ".338 Mag", 500], 
+   ["20Rnd_762x51_Mag", "7.62mm Mag", 350], 
+   ["10Rnd_762x54_Mag", "7.62mm Mag", 300] 
+  ]; 
+ 
+        createDialog "RscDisplayEmpty"; 
+        private _display = findDisplay -1; 
+ 
+        private _bg = _display ctrlCreate ["RscText", 1]; 
+        _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.7]; 
+        _bg ctrlSetBackgroundColor [0, 0, 0, 0.7]; 
+        _bg ctrlCommit 0; 
+ 
+        private _title = _display ctrlCreate ["RscText", 2]; 
+        _title ctrlSetText "Weapon Shop"; 
+        _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05]; 
+        _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+        _title ctrlSetTextColor [1, 1, 1, 1]; 
+        _title ctrlCommit 0; 
+ 
+        private _bankText = _display ctrlCreate ["RscText", 3]; 
+        _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05]; 
+        _bankText ctrlSetTextColor [0, 1, 0, 1]; 
+        _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]]; 
+        _bankText ctrlCommit 0; 
+ 
+        private _listBox = _display ctrlCreate ["RscListBox", 4]; 
+        _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.2]; 
+        _listBox ctrlCommit 0; 
+ 
+        { 
+            _x params ["_class", "_name", "_price"]; 
+            private _index = _listBox lbAdd format["%1 - $%2", _name, _price]; 
+            _listBox lbSetData [_index, _class]; 
+            _listBox lbSetValue [_index, _price]; 
+            _listBox lbSetPictureRight [_index, getText (configFile >> "CfgWeapons" >> _class >> "picture")]; 
+            _listBox lbSetPictureRightColor [_index, [1, 1, 1, 1]]; 
+        } forEach _weapons; 
+ 
+        private _buyBtn = _display ctrlCreate ["RscButton", 5]; 
+        _buyBtn ctrlSetText "Purchase Weapon"; 
+        _buyBtn ctrlSetPosition [0.325, 0.53, 0.16, 0.05]; 
+        _buyBtn ctrlSetTextColor [0, 1, 0, 1]; 
+        _buyBtn ctrlCommit 0; 
+ 
+        _buyBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _display = ctrlParent _ctrl; 
+            private _listBox = _display displayCtrl 4; 
+            private _selectedIndex = lbCurSel _listBox; 
+            if (_selectedIndex != -1) then { 
+                private _weaponClass = _listBox lbData _selectedIndex; 
+                private _price = _listBox lbValue _selectedIndex; 
+                [player, _weaponClass, _price] remoteExec ["fnc_purchaseWeapon", 2]; 
+            }; 
+        }]; 
+ 
+        private _sellBtn = _display ctrlCreate ["RscButton", 10]; 
+        _sellBtn ctrlSetText "Sell Weapon"; 
+        _sellBtn ctrlSetPosition [0.495, 0.53, 0.16, 0.05]; 
+        _sellBtn ctrlSetTextColor [1, 0.5, 0, 1]; 
+        _sellBtn ctrlCommit 0; 
+ 
+        _sellBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _player = player; 
+            private _currentWeapon = currentWeapon _player; 
+            if (_currentWeapon != "") then { 
+                private _weaponInfo = _weapons findIf { (_x select 0) isEqualTo _currentWeapon }; 
+                if (_weaponInfo != -1) then { 
+                    private _salePrice = (_weapons select _weaponInfo) select 2; 
+                    _salePrice = _salePrice / 2; 
+                    private _playerUID = getPlayerUID _player; 
+                    private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+                    _player removeWeapon _currentWeapon; 
+                    { 
+                        if (_x in (magazines _player)) then { 
+                            _player removeMagazine _x; 
+                        }; 
+                    } forEach (getArray (configFile >> "CfgWeapons" >> _currentWeapon >> "magazines")); 
+                    _bankMoney = _bankMoney + _salePrice; 
+                    profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+                    saveProfileNamespace; 
+                    [format ["<t size='0.7' color='#00ff00'>Weapon sold for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _salePrice, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+                } else { 
+                    ["<t size='0.7' color='#ff0000'>This weapon is not for sale here!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+                }; 
+            } else { 
+                ["<t size='0.7' color='#ff0000'>You have no weapon to sell!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+            }; 
+        }]; 
+ 
+        private _magSection = _display ctrlCreate ["RscText", 7]; 
+        _magSection ctrlSetText "Magazines"; 
+        _magSection ctrlSetPosition [0.3, 0.59, 0.4, 0.05]; 
+        _magSection ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+        _magSection ctrlSetTextColor [1, 1, 1, 1]; 
+        _magSection ctrlCommit 0; 
+ 
+        private _magListBox = _display ctrlCreate ["RscListBox", 8]; 
+        _magListBox ctrlSetPosition [0.325, 0.65, 0.35, 0.2]; 
+        _magListBox ctrlCommit 0; 
+ 
+        { 
+            _x params ["_magClass", "_magName", "_magPrice"]; 
+            private _magIndex = _magListBox lbAdd format["%1 - $%2", _magName, _magPrice]; 
+            _magListBox lbSetData [_magIndex, _magClass]; 
+            _magListBox lbSetValue [_magIndex, _magPrice]; 
+            _magListBox lbSetPictureRight [_magIndex, getText (configFile >> "CfgMagazines" >> _magClass >> "picture")]; 
+            _magListBox lbSetPictureRightColor [_magIndex, [1, 1, 1, 1]]; 
+        } forEach _mags; 
+ 
+        private _buyMagBtn = _display ctrlCreate ["RscButton", 9]; 
+        _buyMagBtn ctrlSetText "Buy Mag"; 
+        _buyMagBtn ctrlSetPosition [0.325, 0.86, 0.16, 0.05]; 
+        _buyMagBtn ctrlSetTextColor [0, 1, 0, 1]; 
+        _buyMagBtn ctrlCommit 0; 
+ 
+        _buyMagBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _display = ctrlParent _ctrl; 
+            private _magListBox = _display displayCtrl 8; 
+            private _selectedMagIndex = lbCurSel _magListBox; 
+            if (_selectedMagIndex != -1) then { 
+                private _magClass = _magListBox lbData _selectedMagIndex; 
+                private _magPrice = _magListBox lbValue _selectedMagIndex; 
+                [player, _magClass, _magPrice] remoteExec ["fnc_purchaseMag", 2]; 
+            }; 
+        }]; 
+ 
+        private _closeBtn = _display ctrlCreate ["RscButton", 6]; 
+        _closeBtn ctrlSetText "Close"; 
+        _closeBtn ctrlSetPosition [0.515, 0.86, 0.16, 0.05]; 
+        _closeBtn ctrlSetTextColor [1, 0, 0, 1]; 
+        _closeBtn ctrlCommit 0; 
+ 
+        _closeBtn ctrlAddEventHandler ["ButtonClick", { 
+            closeDialog 0; 
+        }]; 
+    }, [], 1.5, true, true, "", "", 3]; 
+} forEach (allMissionObjects "C_man_p_fugitive_F"); 
+ 
+if (isServer) then { 
+    fnc_purchaseWeapon = { 
+        params ["_player", "_weaponClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+        if (_bankMoney >= _price) then { 
+            private _currentWeapon = currentWeapon _player; 
+            if (_currentWeapon != "") then { 
+                _player removeWeapon _currentWeapon; 
+                { 
+                    if (_x in (magazines _player)) then { 
+                        _player removeMagazine _x; 
+                    }; 
+                } forEach (getArray (configFile >> "CfgWeapons" >> _currentWeapon >> "magazines")); 
+            }; 
+            _player addWeapon _weaponClass; 
+            private _magazineClass = getArray (configFile >> "CfgWeapons" >> _weaponClass >> "magazines") select 0; 
+            for "_i" from 1 to 3 do { 
+                _player addMagazine _magazineClass; 
+            }; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Weapon purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+ 
+    fnc_purchaseMag = { 
+        params ["_player", "_magClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+        if (_bankMoney >= _price) then { 
+            _player addMagazine _magClass; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Magazine purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+ 
+    publicVariable "fnc_purchaseWeapon"; 
+    publicVariable "fnc_purchaseMag"; 
+}; 
+ 
+{ 
+    _x addAction ["<t color='#FFD700'>SMG Shop</t>", { 
+  private _weapons = [ 
+   ["SMG_03_black", "P90 Black 5.7mm", 8000, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03_camo", "P90 Camo 5.7mm", 8200, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03_hex", "P90 Hex 5.7mm", 8200, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03_khaki", "P90 Khaki 5.7mm", 8200, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03_TR_black", "P90 TR Black 5.7mm", 8500, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03_TR_camo", "P90 TR Camo 5.7mm", 8700, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03_TR_hex", "P90 TR Hex 5.7mm", 8700, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03_TR_khaki", "P90 TR Khaki 5.7mm", 8700, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_black", "P90C Black 5.7mm", 7500, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_camo", "P90C Camo 5.7mm", 7700, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_hex", "P90C Hex 5.7mm", 7700, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_khaki", "P90C Khaki 5.7mm", 7700, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_TR_black", "P90C TR Black 5.7mm", 8000, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_TR_camo", "P90C TR Camo 5.7mm", 8200, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_TR_hex", "P90C TR Hex 5.7mm", 8200, ["50Rnd_570x28_SMG_03"]], 
+   ["SMG_03C_TR_khaki", "P90C TR Khaki 5.7mm", 8200, ["50Rnd_570x28_SMG_03"]], 
+   ["hgun_PDW2000_F", "PDW2000 9mm", 5000, ["30Rnd_9x21_Mag"]], 
+   ["SMG_05_F", "Protector 9mm", 5500, ["30Rnd_9x21_Mag_SMG_02"]], 
+   ["SMG_02_F", "Sting 9mm", 6000, ["30Rnd_9x21_Mag_SMG_02"]], 
+   ["SMG_01_F", "Vector .45 ACP", 7000, ["30Rnd_45ACP_Mag_SMG_01"]] 
+  ]; 
+ 
+  private _mags = [ 
+   ["50Rnd_570x28_SMG_03", "5.7mm Mag", 300], 
+   ["30Rnd_9x21_Mag", "9mm Mag", 150], 
+   ["30Rnd_9x21_Mag_SMG_02", "9mm SMG Mag", 200], 
+   ["30Rnd_45ACP_Mag_SMG_01", ".45 ACP Mag", 250] 
+  ]; 
+ 
+        createDialog "RscDisplayEmpty"; 
+        private _display = findDisplay -1; 
+ 
+        private _bg = _display ctrlCreate ["RscText", 1]; 
+        _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.7]; 
+        _bg ctrlSetBackgroundColor [0, 0, 0, 0.7]; 
+        _bg ctrlCommit 0; 
+ 
+        private _title = _display ctrlCreate ["RscText", 2]; 
+        _title ctrlSetText "Weapon Shop"; 
+        _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05]; 
+        _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+        _title ctrlSetTextColor [1, 1, 1, 1]; 
+        _title ctrlCommit 0; 
+ 
+        private _bankText = _display ctrlCreate ["RscText", 3]; 
+        _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05]; 
+        _bankText ctrlSetTextColor [0, 1, 0, 1]; 
+        _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]]; 
+        _bankText ctrlCommit 0; 
+ 
+        private _listBox = _display ctrlCreate ["RscListBox", 4]; 
+        _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.2]; 
+        _listBox ctrlCommit 0; 
+ 
+        { 
+            _x params ["_class", "_name", "_price"]; 
+            private _index = _listBox lbAdd format["%1 - $%2", _name, _price]; 
+            _listBox lbSetData [_index, _class]; 
+            _listBox lbSetValue [_index, _price]; 
+            _listBox lbSetPictureRight [_index, getText (configFile >> "CfgWeapons" >> _class >> "picture")]; 
+            _listBox lbSetPictureRightColor [_index, [1, 1, 1, 1]]; 
+        } forEach _weapons; 
+ 
+        private _buyBtn = _display ctrlCreate ["RscButton", 5]; 
+        _buyBtn ctrlSetText "Purchase Weapon"; 
+        _buyBtn ctrlSetPosition [0.325, 0.53, 0.16, 0.05]; 
+        _buyBtn ctrlSetTextColor [0, 1, 0, 1]; 
+        _buyBtn ctrlCommit 0; 
+ 
+        _buyBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _display = ctrlParent _ctrl; 
+            private _listBox = _display displayCtrl 4; 
+            private _selectedIndex = lbCurSel _listBox; 
+            if (_selectedIndex != -1) then { 
+                private _weaponClass = _listBox lbData _selectedIndex; 
+                private _price = _listBox lbValue _selectedIndex; 
+                [player, _weaponClass, _price] remoteExec ["fnc_purchaseWeapon", 2]; 
+            }; 
+        }]; 
+ 
+        private _sellBtn = _display ctrlCreate ["RscButton", 10]; 
+        _sellBtn ctrlSetText "Sell Weapon"; 
+        _sellBtn ctrlSetPosition [0.495, 0.53, 0.16, 0.05]; 
+        _sellBtn ctrlSetTextColor [1, 0.5, 0, 1]; 
+        _sellBtn ctrlCommit 0; 
+ 
+        _sellBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _player = player; 
+            private _currentWeapon = currentWeapon _player; 
+            if (_currentWeapon != "") then { 
+                private _weaponInfo = _weapons findIf { (_x select 0) isEqualTo _currentWeapon }; 
+                if (_weaponInfo != -1) then { 
+                    private _salePrice = (_weapons select _weaponInfo) select 2; 
+                    _salePrice = _salePrice / 2; 
+                    private _playerUID = getPlayerUID _player; 
+                    private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+                    _player removeWeapon _currentWeapon; 
+                    { 
+                        if (_x in (magazines _player)) then { 
+                            _player removeMagazine _x; 
+                        }; 
+                    } forEach (getArray (configFile >> "CfgWeapons" >> _currentWeapon >> "magazines")); 
+                    _bankMoney = _bankMoney + _salePrice; 
+                    profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+                    saveProfileNamespace; 
+                    [format ["<t size='0.7' color='#00ff00'>Weapon sold for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _salePrice, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+                } else { 
+                    ["<t size='0.7' color='#ff0000'>This weapon is not for sale here!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+                }; 
+            } else { 
+                ["<t size='0.7' color='#ff0000'>You have no weapon to sell!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+            }; 
+        }]; 
+ 
+        private _magSection = _display ctrlCreate ["RscText", 7]; 
+        _magSection ctrlSetText "Magazines"; 
+        _magSection ctrlSetPosition [0.3, 0.59, 0.4, 0.05]; 
+        _magSection ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1]; 
+        _magSection ctrlSetTextColor [1, 1, 1, 1]; 
+        _magSection ctrlCommit 0; 
+ 
+        private _magListBox = _display ctrlCreate ["RscListBox", 8]; 
+        _magListBox ctrlSetPosition [0.325, 0.65, 0.35, 0.2]; 
+        _magListBox ctrlCommit 0; 
+ 
+        { 
+            _x params ["_magClass", "_magName", "_magPrice"]; 
+            private _magIndex = _magListBox lbAdd format["%1 - $%2", _magName, _magPrice]; 
+            _magListBox lbSetData [_magIndex, _magClass]; 
+            _magListBox lbSetValue [_magIndex, _magPrice]; 
+            _magListBox lbSetPictureRight [_magIndex, getText (configFile >> "CfgMagazines" >> _magClass >> "picture")]; 
+            _magListBox lbSetPictureRightColor [_magIndex, [1, 1, 1, 1]]; 
+        } forEach _mags; 
+ 
+        private _buyMagBtn = _display ctrlCreate ["RscButton", 9]; 
+        _buyMagBtn ctrlSetText "Buy Mag"; 
+        _buyMagBtn ctrlSetPosition [0.325, 0.86, 0.16, 0.05]; 
+        _buyMagBtn ctrlSetTextColor [0, 1, 0, 1]; 
+        _buyMagBtn ctrlCommit 0; 
+ 
+        _buyMagBtn ctrlAddEventHandler ["ButtonClick", { 
+            params ["_ctrl"]; 
+            private _display = ctrlParent _ctrl; 
+            private _magListBox = _display displayCtrl 8; 
+            private _selectedMagIndex = lbCurSel _magListBox; 
+            if (_selectedMagIndex != -1) then { 
+                private _magClass = _magListBox lbData _selectedMagIndex; 
+                private _magPrice = _magListBox lbValue _selectedMagIndex; 
+                [player, _magClass, _magPrice] remoteExec ["fnc_purchaseMag", 2]; 
+            }; 
+        }]; 
+ 
+        private _closeBtn = _display ctrlCreate ["RscButton", 6]; 
+        _closeBtn ctrlSetText "Close"; 
+        _closeBtn ctrlSetPosition [0.515, 0.86, 0.16, 0.05]; 
+        _closeBtn ctrlSetTextColor [1, 0, 0, 1]; 
+        _closeBtn ctrlCommit 0; 
+ 
+        _closeBtn ctrlAddEventHandler ["ButtonClick", { 
+            closeDialog 0; 
+        }]; 
+    }, [], 1.5, true, true, "", "", 3]; 
+} forEach (allMissionObjects "C_man_hunter_1_F"); 
+ 
+if (isServer) then { 
+    fnc_purchaseWeapon = { 
+        params ["_player", "_weaponClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+        if (_bankMoney >= _price) then { 
+            private _currentWeapon = currentWeapon _player; 
+            if (_currentWeapon != "") then { 
+                _player removeWeapon _currentWeapon; 
+                { 
+                    if (_x in (magazines _player)) then { 
+                        _player removeMagazine _x; 
+                    }; 
+                } forEach (getArray (configFile >> "CfgWeapons" >> _currentWeapon >> "magazines")); 
+            }; 
+            _player addWeapon _weaponClass; 
+            private _magazineClass = getArray (configFile >> "CfgWeapons" >> _weaponClass >> "magazines") select 0; 
+            for "_i" from 1 to 3 do { 
+                _player addMagazine _magazineClass; 
+            }; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Weapon purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+ 
+    fnc_purchaseMag = { 
+        params ["_player", "_magClass", "_price"]; 
+        private _playerUID = getPlayerUID _player; 
+        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0]; 
+        if (_bankMoney >= _price) then { 
+            _player addMagazine _magClass; 
+            _bankMoney = _bankMoney - _price; 
+            profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney]; 
+            saveProfileNamespace; 
+            [format ["<t size='0.7' color='#00ff00'>Magazine purchased for <t color='#FFFFFF'>$%1</t>. Bank Balance: <t color='#FFFFFF'>$%2</t></t>", _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        } else { 
+            ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", _player]; 
+        }; 
+    }; 
+ 
+    publicVariable "fnc_purchaseWeapon"; 
+    publicVariable "fnc_purchaseMag"; 
 }; 
