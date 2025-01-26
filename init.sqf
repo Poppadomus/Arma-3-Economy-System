@@ -729,178 +729,244 @@ if (isServer) then {
     publicVariable "fnc_purchaseVest";      
 };     
      
-if (isServer) then {     
-    commodities = [     
-        ["Crack", 100],     
-        ["Cocaine", 500],     
-        ["Crystal Meth", 50],     
-        ["Ecstasy", 200],     
-        ["Spice", 80],     
-        ["Heroin", 60],     
-        ["Cannabis", 120],     
-        ["LSD", 40]     
-    ];     
-    publicVariable "commodities";     
+if (isServer) then {      
+    commodities = [      
+        ["Crack", 100, 0],      
+        ["Cocaine", 500, 0],      
+        ["Crystal Meth", 50, 0],      
+        ["Ecstasy", 200, 0],      
+        ["Spice", 80, 0],      
+        ["Heroin", 60, 0],      
+        ["Cannabis", 120, 0],      
+        ["LSD", 40, 0]      
+    ];      
+    publicVariable "commodities";      
      
-    [] spawn {     
-        while {true} do {     
-            {     
-                _x params ["_name", "_price"];     
-                private _change = (random 20) - 10;     
-                private _newPrice = (_price + _change) max 1;     
-                _x set [1, _newPrice];     
-            } forEach commodities;     
-            publicVariable "commodities";     
-            sleep 5;     
-        };     
-    };     
-};     
-     
-fnc_updateCommodityDisplay = {     
-    params ["_display"];     
-    if (!isNull _display) then {     
-        private _listBox = _display displayCtrl 4;     
-        private _bankText = _display displayCtrl 3;     
-     
-        _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]];     
-     
-        lbClear _listBox;     
-        {     
-            _x params ["_name", "_price"];     
-            private _index = _listBox lbAdd format["%1 - $%2", _name, round _price];     
-            _listBox lbSetData [_index, _name];     
-            _listBox lbSetValue [_index, round _price];     
-        } forEach commodities;     
-    };     
-};     
-     
-{     
-    _x addAction [     
-        "<t color='#FFD700'>Commodity Market</t>",     
-        {     
-            createDialog "RscDisplayEmpty";     
-            private _display = findDisplay -1;     
-            private _bg = _display ctrlCreate ["RscText", 1];     
-            _bg ctrlSetPosition [0.3, 0.2, 0.4, 0.7];     
-            _bg ctrlSetBackgroundColor [0, 0, 0, 0.7];     
-            _bg ctrlCommit 0;     
-            private _title = _display ctrlCreate ["RscText", 2];     
-            _title ctrlSetText "Commodity Market";     
-            _title ctrlSetPosition [0.3, 0.2, 0.4, 0.05];     
-            _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1];     
-            _title ctrlSetTextColor [1, 1, 1, 1];     
-            _title ctrlCommit 0;     
-            private _bankText = _display ctrlCreate ["RscText", 3];     
-            _bankText ctrlSetPosition [0.325, 0.26, 0.35, 0.05];     
-            _bankText ctrlSetTextColor [0, 1, 0, 1];     
-            _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]];     
-            _bankText ctrlCommit 0;     
-            private _listBox = _display ctrlCreate ["RscListBox", 4];     
-            _listBox ctrlSetPosition [0.325, 0.32, 0.35, 0.3];     
-            _listBox ctrlCommit 0;     
-     
-            private _updateHandle = [] spawn {     
-                private _display = findDisplay -1;     
-                while {!isNull _display} do {     
-                    [_display] call fnc_updateCommodityDisplay;     
-                    sleep 1;     
-                };     
-            };     
-     
-            _display setVariable ["updateHandle", _updateHandle];     
-     
-            {     
-                _x params ["_name", "_price"];     
-                private _index = _listBox lbAdd format["%1 - $%2", _name, _price];     
-                _listBox lbSetData [_index, _name];     
-                _listBox lbSetValue [_index, _price];     
-            } forEach commodities;     
-     
-            private _buyBtn = _display ctrlCreate ["RscButton", 5];     
-            _buyBtn ctrlSetText "Buy";     
-            _buyBtn ctrlSetPosition [0.325, 0.64, 0.16, 0.05];     
-            _buyBtn ctrlSetTextColor [0, 1, 0, 1];     
-            _buyBtn ctrlCommit 0;     
-     
-            _buyBtn ctrlAddEventHandler ["ButtonClick", {     
-                params ["_ctrl"];     
-                private _display = ctrlParent _ctrl;     
-                private _listBox = _display displayCtrl 4;     
-                private _selectedIndex = lbCurSel _listBox;     
-                if (_selectedIndex != -1) then {     
-                    private _commodityName = _listBox lbData _selectedIndex;     
-                    private _price = _listBox lbValue _selectedIndex;     
-                    private _playerUID = getPlayerUID player;     
-                    private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0];     
-                    if (_bankMoney >= _price) then {     
-                        _bankMoney = _bankMoney - _price;     
-                        profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney];     
-                        saveProfileNamespace;     
-                        private _playerCommodities = profileNamespace getVariable [_playerUID + "_commodities", []];     
-                        _playerCommodities pushBack [_commodityName, _price];     
-                        profileNamespace setVariable [_playerUID + "_commodities", _playerCommodities];     
-                        saveProfileNamespace;     
-                        [format ["<t size='0.7' color='#00ff00'>Bought 1 share of %1 for <t color='#FFFFFF'>$%2</t>. Bank Balance: <t color='#FFFFFF'>$%3</t></t>", _commodityName, _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];     
-                    } else {     
-                        ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];     
-                    };     
-                };     
-            }];     
-     
-            private _sellBtn = _display ctrlCreate ["RscButton", 10];     
-            _sellBtn ctrlSetText "Sell";     
-            _sellBtn ctrlSetPosition [0.495, 0.64, 0.16, 0.05];     
-            _sellBtn ctrlSetTextColor [1, 0.5, 0, 1];     
-            _sellBtn ctrlCommit 0;     
-     
-            _sellBtn ctrlAddEventHandler ["ButtonClick", {     
-                params ["_ctrl"];     
-                private _display = ctrlParent _ctrl;     
-                private _listBox = _display displayCtrl 4;     
-                private _selectedIndex = lbCurSel _listBox;     
-                if (_selectedIndex != -1) then {     
-                    private _commodityName = _listBox lbData _selectedIndex;     
-                    private _price = _listBox lbValue _selectedIndex;     
-                    private _playerUID = getPlayerUID player;     
-                    private _playerCommodities = profileNamespace getVariable [_playerUID + "_commodities", []];     
-                    private _index = _playerCommodities findIf {(_x select 0) isEqualTo _commodityName};     
-                    if (_index != -1) then {     
-                        private _boughtPrice = (_playerCommodities select _index) select 1;     
-                        _playerCommodities deleteAt _index;     
-                        profileNamespace setVariable [_playerUID + "_commodities", _playerCommodities];     
-                        saveProfileNamespace;     
-                        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0];     
-                        _bankMoney = _bankMoney + _price;     
-                        profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney];     
-                        saveProfileNamespace;     
-                        [format ["<t size='0.7' color='#00ff00'>Sold 1 share of %1 for <t color='#FFFFFF'>$%2</t>. Bank Balance: <t color='#FFFFFF'>$%3</t></t>", _commodityName, _price, _bankMoney], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];     
-                    } else {     
-                        ["<t size='0.7' color='#ff0000'>You don't own any shares of this commodity!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];     
-                    };     
-                };     
-            }];     
-     
-            private _closeBtn = _display ctrlCreate ["RscButton", 6];     
-            _closeBtn ctrlSetText "Close";     
-            _closeBtn ctrlSetPosition [0.325, 0.71, 0.35, 0.05];     
-            _closeBtn ctrlSetTextColor [1, 0, 0, 1];     
-            _closeBtn ctrlCommit 0;     
-     
-            _closeBtn ctrlAddEventHandler ["ButtonClick", {     
-                params ["_ctrl"];     
-                private _display = ctrlParent _ctrl;     
-                terminate (_display getVariable "updateHandle");     
-                closeDialog 0;     
-            }];     
-        },     
-        [],     
-        1.5,     
-        true,     
-        true,     
-        "",     
-        "",     
-        3     
-    ];     
+    [] spawn {      
+        while {true} do {      
+            {      
+                _x params ["_name", "_price", "_owned"];      
+                private _change = (random 20) - 10;      
+                private _newPrice = (_price + _change) max 1;      
+                _x set [1, _newPrice];      
+            } forEach commodities;      
+            publicVariable "commodities";      
+            sleep 5;      
+        };      
+    };      
+};      
+ 
+fnc_updateCommodityDisplay = {      
+    params ["_display"];      
+    if (!isNull _display) then {      
+        private _listBox = _display displayCtrl 4;      
+        private _bankText = _display displayCtrl 3;      
+        private _playerUID = getPlayerUID player; 
+        private _playerCommodities = profileNamespace getVariable [_playerUID + "_commodities", []]; 
+ 
+        _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [_playerUID + "_bankMoney", 0]];      
+ 
+        lbClear _listBox;      
+        {      
+            _x params ["_name", "_price"];      
+            private _owned = count (_playerCommodities select {(_x select 0) isEqualTo _name}); 
+            private _totalInvested = 0; 
+            private _profitLoss = 0; 
+             
+            { 
+                if ((_x select 0) isEqualTo _name) then { 
+                    _totalInvested = _totalInvested + (_x select 1); 
+                    _profitLoss = _profitLoss + (_price - (_x select 1)); 
+                }; 
+            } forEach _playerCommodities; 
+             
+            private _index = _listBox lbAdd format["%1 - Current: $%2 | Owned: %3 | P/L: $%4",  
+                _name, round _price, _owned, round _profitLoss];      
+            _listBox lbSetData [_index, _name];      
+            _listBox lbSetValue [_index, round _price];      
+        } forEach commodities;      
+    };      
+};      
+ 
+{      
+    _x addAction [      
+        "<t color='#FFD700'>Commodity Market</t>",      
+        {      
+            createDialog "RscDisplayEmpty";      
+            private _display = findDisplay -1;      
+            private _bg = _display ctrlCreate ["RscText", 1];      
+            _bg ctrlSetPosition [0.2, 0.2, 0.8, 0.7];      
+            _bg ctrlSetBackgroundColor [0, 0, 0, 0.7];      
+            _bg ctrlCommit 0;      
+            private _title = _display ctrlCreate ["RscText", 2];      
+            _title ctrlSetText "Commodity Market";      
+            _title ctrlSetPosition [0.2, 0.2, 0.8, 0.05];      
+            _title ctrlSetBackgroundColor [0.1, 0.1, 0.3, 1];      
+            _title ctrlSetTextColor [1, 1, 1, 1];      
+            _title ctrlCommit 0;      
+            private _bankText = _display ctrlCreate ["RscText", 3];      
+            _bankText ctrlSetPosition [0.225, 0.26, 0.75, 0.05];      
+            _bankText ctrlSetTextColor [0, 1, 0, 1];      
+            _bankText ctrlSetText format["Bank Balance: $%1", profileNamespace getVariable [(getPlayerUID player) + "_bankMoney", 0]];      
+            _bankText ctrlCommit 0;      
+            private _listBox = _display ctrlCreate ["RscListBox", 4];      
+            _listBox ctrlSetPosition [0.225, 0.32, 0.75, 0.25];      
+            _listBox ctrlCommit 0;      
+ 
+            private _updateHandle = [] spawn {      
+                private _display = findDisplay -1;      
+                while {!isNull _display} do {      
+                    [_display] call fnc_updateCommodityDisplay;      
+                    sleep 1;      
+                };      
+            };      
+ 
+            _display setVariable ["updateHandle", _updateHandle];      
+ 
+            {      
+                _x params ["_name", "_price"];      
+                private _index = _listBox lbAdd format["%1 - $%2", _name, _price];      
+                _listBox lbSetData [_index, _name];      
+                _listBox lbSetValue [_index, _price];      
+            } forEach commodities;      
+ 
+            private _quantityInput = _display ctrlCreate ["RscEdit", 7];      
+            _quantityInput ctrlSetPosition [0.425, 0.58, 0.35, 0.05];      
+            _quantityInput ctrlSetText "1";      
+            _quantityInput ctrlSetBackgroundColor [0.2, 0.2, 0.2, 1];      
+            _quantityInput ctrlCommit 0;      
+ 
+            private _minusBtn = _display ctrlCreate ["RscButton", 8];      
+            _minusBtn ctrlSetText "-";      
+            _minusBtn ctrlSetPosition [0.325, 0.58, 0.05, 0.05];      
+            _minusBtn ctrlCommit 0;      
+ 
+            private _plusBtn = _display ctrlCreate ["RscButton", 9];      
+            _plusBtn ctrlSetText "+";      
+            _plusBtn ctrlSetPosition [0.825, 0.58, 0.05, 0.05];      
+            _plusBtn ctrlCommit 0;      
+ 
+            _minusBtn ctrlAddEventHandler ["ButtonClick", {      
+                params ["_ctrl"];      
+                private _display = ctrlParent _ctrl;      
+                private _quantityInput = _display displayCtrl 7;      
+                private _currentQty = parseNumber ctrlText _quantityInput;      
+                if (_currentQty > 1) then {      
+                    _quantityInput ctrlSetText str (_currentQty - 1);      
+                };      
+            }];      
+ 
+            _plusBtn ctrlAddEventHandler ["ButtonClick", {      
+                params ["_ctrl"];      
+                private _display = ctrlParent _ctrl;      
+                private _quantityInput = _display displayCtrl 7;      
+                private _currentQty = parseNumber ctrlText _quantityInput;      
+                _quantityInput ctrlSetText str (_currentQty + 1);      
+            }];      
+ 
+            private _buyBtn = _display ctrlCreate ["RscButton", 5];      
+            _buyBtn ctrlSetText "Buy";      
+            _buyBtn ctrlSetPosition [0.325, 0.65, 0.16, 0.05];      
+            _buyBtn ctrlSetTextColor [0, 1, 0, 1];      
+            _buyBtn ctrlCommit 0;      
+ 
+            _buyBtn ctrlAddEventHandler ["ButtonClick", {      
+                params ["_ctrl"];      
+                private _display = ctrlParent _ctrl;      
+                private _listBox = _display displayCtrl 4;      
+                private _selectedIndex = lbCurSel _listBox;      
+                private _quantity = parseNumber ctrlText (_display displayCtrl 7); 
+                 
+                if (_selectedIndex != -1 && _quantity > 0) then {      
+                    private _commodityName = _listBox lbData _selectedIndex;      
+                    private _price = _listBox lbValue _selectedIndex;      
+                    private _totalCost = _price * _quantity; 
+                    private _playerUID = getPlayerUID player;      
+                    private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0];      
+                     
+                    if (_bankMoney >= _totalCost) then {      
+                        _bankMoney = _bankMoney - _totalCost;      
+                        profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney];      
+                         
+                        private _playerCommodities = profileNamespace getVariable [_playerUID + "_commodities", []];      
+                        for "_i" from 1 to _quantity do { 
+                            _playerCommodities pushBack [_commodityName, _price];      
+                        }; 
+                        profileNamespace setVariable [_playerUID + "_commodities", _playerCommodities];      
+                        saveProfileNamespace;      
+                         
+                        [format ["<t size='0.7' color='#00ff00'>Bought %1 shares of %2 for <t color='#FFFFFF'>$%3</t></t>",  
+                            _quantity, _commodityName, _totalCost], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];      
+                    } else {      
+                        ["<t size='0.7' color='#ff0000'>Not enough money in bank!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];      
+                    };      
+                };      
+            }];      
+ 
+            private _sellBtn = _display ctrlCreate ["RscButton", 10];      
+            _sellBtn ctrlSetText "Sell";      
+            _sellBtn ctrlSetPosition [0.495, 0.65, 0.16, 0.05];      
+            _sellBtn ctrlSetTextColor [1, 0.5, 0, 1];      
+            _sellBtn ctrlCommit 0;      
+ 
+            _sellBtn ctrlAddEventHandler ["ButtonClick", {      
+                params ["_ctrl"];      
+                private _display = ctrlParent _ctrl;      
+                private _listBox = _display displayCtrl 4;      
+                private _selectedIndex = lbCurSel _listBox;      
+                private _quantity = parseNumber ctrlText (_display displayCtrl 7); 
+                 
+                if (_selectedIndex != -1 && _quantity > 0) then {      
+                    private _commodityName = _listBox lbData _selectedIndex;      
+                    private _price = _listBox lbValue _selectedIndex;      
+                    private _playerUID = getPlayerUID player;      
+                    private _playerCommodities = profileNamespace getVariable [_playerUID + "_commodities", []];      
+                    private _ownedShares = _playerCommodities select {(_x select 0) isEqualTo _commodityName}; 
+                     
+                    if (count _ownedShares >= _quantity) then {      
+                        private _totalValue = _price * _quantity; 
+                        for "_i" from 1 to _quantity do { 
+                            private _index = _playerCommodities findIf {(_x select 0) isEqualTo _commodityName}; 
+                            if (_index != -1) then { 
+                                _playerCommodities deleteAt _index; 
+                            }; 
+                        }; 
+                         
+                        profileNamespace setVariable [_playerUID + "_commodities", _playerCommodities];      
+                        private _bankMoney = profileNamespace getVariable [_playerUID + "_bankMoney", 0];      
+                        _bankMoney = _bankMoney + _totalValue;      
+                        profileNamespace setVariable [_playerUID + "_bankMoney", _bankMoney];      
+                        saveProfileNamespace;      
+                         
+                        [format ["<t size='0.7' color='#00ff00'>Sold %1 shares of %2 for <t color='#FFFFFF'>$%3</t></t>",  
+                            _quantity, _commodityName, _totalValue], -1, 0.85, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];      
+                    } else {      
+                        ["<t size='0.7' color='#ff0000'>You don't own enough shares!</t>", -1, 0.95, 4, 1] remoteExec ["BIS_fnc_dynamicText", player];      
+                    };      
+                };      
+            }];      
+ 
+            private _closeBtn = _display ctrlCreate ["RscButton", 6];      
+            _closeBtn ctrlSetText "Close";      
+            _closeBtn ctrlSetPosition [0.325, 0.72, 0.35, 0.05];      
+            _closeBtn ctrlSetTextColor [1, 0, 0, 1];      
+            _closeBtn ctrlCommit 0;      
+ 
+            _closeBtn ctrlAddEventHandler ["ButtonClick", {      
+                params ["_ctrl"];      
+                private _display = ctrlParent _ctrl;      
+                terminate (_display getVariable "updateHandle");      
+                closeDialog 0;      
+            }];      
+        },      
+        [],      
+        1.5,      
+        true,      
+        true,      
+        "",      
+        "",      
+        3      
+    ];      
 } forEach (allMissionObjects "C_Soldier_VR_F");     
      
 fnc_floatingKillText = {     
